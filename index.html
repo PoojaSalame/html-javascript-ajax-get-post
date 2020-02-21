@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta  http-equiv="Content-Type" content="text/html; charset=utf-8" enctype="application/json"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Insert title here</title>
+<style>
+
+table {
+		  font-family: arial, sans-serif;
+		  border-collapse: collapse;
+		  width: 50%;
+		}
+		
+		td, th {
+		  border: 1px solid #dddddd;
+		  text-align: left;
+		  padding: 8px;
+		}
+		
+		tr:nth-child(even) {
+		  background-color: #dddddd;
+		}
+		table tr:hover  { 
+        background-color:#CCCCCC; 
+      	}
+		
+
+      
+#change{
+	background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
+}
+</style>
+</head>
+<body>
+	<button id="click" onClick="Get_List();">Click me</button>
+	<br><br><br>
+	<div id="display_table">
+		
+	</div>
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript">
+	
+		function Get_List(){
+			 
+			$.ajax({
+				type : "GET",			
+				url :'https://morning-shelf-84536.herokuapp.com/student/students',
+				success : function(data){
+					console.log(data);
+					 
+					var students = data.students;
+					console.log(students);
+									
+					var output =  '<table id="tblstudent"><thead><th id="s_id">ID</th><th id="s_name">Name</th><th id="s_marks">Marks</th></thead><tbody>';
+					for(var i in students){
+						 
+							output += 
+									'<tr id="row"><td id="tdid">' +
+									students[i].sid +
+					            	'</td><td id="tdname"><button id="change" onclick="javascript:edit();">' +
+					            	students[i].name +
+					            	'</button></td><td id="tdmark">' +
+					            	students[i].marks +
+					            	'</td></tr>';
+						
+					}
+					output += '</tbody></table>';
+					
+					$('#display_table').html(output);
+			            
+				}
+				 
+			})
+			
+			
+		}	
+		
+		//edit button : student name :get on editStudent.html
+		function edit(){
+			
+				var arrData=[];
+			    // code to read selected table row cell data.
+			    $("#tblstudent").click('#change',function(){
+			         // get the current row
+			         var currentRow=$(this).closest("tr"); 
+			         
+			         var col1=currentRow.find("td:eq(0)").text(); 
+			         var col2=currentRow.find("td:eq(1)").text(); 
+			         var col3=currentRow.find("td:eq(2)").text(); 
+			         
+			         
+			         var url = "editStudent.html?sID="+col1;
+			         window.location.href = url;
+			         
+			    });	   
+		}
+	</script>
+
+</body>
+</html>
+

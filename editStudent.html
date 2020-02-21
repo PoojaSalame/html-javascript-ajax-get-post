@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="row_column.js"></script>
+<script type="text/javascript">
+	
+	//fetch id using query string
+	$.QueryString = (function(a) {
+	    if (a == "") return {};
+	    var b = {};
+	    for (var i = 0; i < a.length; ++i)
+	    {
+	        var p=a[i].split('=');
+	        if (p.length != 2) continue;
+	        b[p[0]] = decodeURIComponent(p[1].replace(/\\+/g, " "));
+	    }
+	    return b;
+	})(window.location.search.substr(1).split('&'))
+	
+	
+	function pageLoad(){
+		var id = $.QueryString["sID"];
+		console.log('passed id : ',id);
+		$.ajax({
+			type : 'GET',
+			url : 'https://morning-shelf-84536.herokuapp.com/student/' +id,
+			dataType: 'json',
+		    success : function(data){
+		    	console.log(data);
+		    	
+		    	//save only student in variable.
+		    	var student_data = data.student;
+		    	
+				//print in input box
+				$(std_id).val(student_data.sid);
+				$(std_name).val(student_data.name);
+				$(std_marks).val(student_data.marks);
+					    	
+		    },
+			error: function (data) {
+		        console.log("error");
+		    }
+		    
+		});	
+	}
+	
+	//save & update student
+	function update(event){		
+		 event.stopPropagation();
+					
+				//get the value from input box
+				var stud_id1 = $('#std_id').val()
+				var stud_id = parseInt(stud_id1)
+				
+				var stud_name = $('#std_name').val()
+				
+				var stud_marks1 = $('#std_marks').val()
+				var stud_marks = parseInt(stud_marks1)
+				
+				//insert value in json array object
+				const object = {};
+				object.id = stud_id;
+				object.name = stud_name;
+				object.marks = stud_marks;
+				
+				
+				const myObjStr = JSON.stringify(object);
+			
+				
+				$.ajax({
+					type : 'POST',
+					url : 'https://morning-shelf-84536.herokuapp.com/student',
+					contentType: 'application/json; charset=utf-8',
+					data: myObjStr,
+				    dataType: 'json',
+				    success : function(data){
+				    	
+				    	//console.log(JSON.stringify(data));	
+				    	alert(data);
+				    },
+					error: function (data) {
+	                   console.log("error");
+	               }
+				    
+				});		
+		
+	}
+	
+	
+	
+</script>
+</head>
+
+<body onload="javascript:pageLoad();">
+		
+		<!-- <div id="sdata"></div>  -->
+		<table >
+			<tr>
+				<td colspan="2"><b>Student Data</b></td>
+			</tr>
+			<tr>
+				<td>ID</td>
+				<td><input type="text" id="std_id" name="Sid" value="" disabled/></td>
+			</tr>
+			<tr>
+				<td>Name</td>
+				<td><input type="text" id="std_name" name="Sname" value=""/></td>
+			</tr>
+			<tr>
+				<td>Marks</td>
+				<td><input type="text" id="std_marks" name="Smarks" value=""/></td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<button id="btnsave" name="update" onclick="javascript:update(event);">Save&Update</button>
+				<td>
+			</tr>
+		</table>
+		
+	</body>
+</html>
